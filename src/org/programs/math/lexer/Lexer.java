@@ -1,8 +1,8 @@
 package org.programs.math.lexer;
 
 import org.programs.math.exceptions.IllegalCharException;
-import org.programs.math.types.TNumber;
-import org.programs.math.types.Result;
+import org.programs.math.types.ComplexNum;
+import org.programs.math.extra.Result;
 
 import java.util.*;
 
@@ -28,6 +28,7 @@ public final class Lexer {
                     "pi",
                     "\u03C0", //pi symbol
                     "e",
+                    "i",
                     "\u03A0", //PI symbol
                     "PI"
             )
@@ -115,8 +116,8 @@ public final class Lexer {
                 }
                 yield operator(TokenType.DIVIDE);
             }
-            case '%' -> operator(TokenType.MODULUS);
             case '^' -> operator(TokenType.POW);
+            case '~' -> operator(TokenType.COMPLEMENT);
             case '(' -> operator(TokenType.LPAREN);
             case ')' -> operator(TokenType.RPAREN);
             case '|' -> operator(TokenType.PIPE);
@@ -143,7 +144,7 @@ public final class Lexer {
      * @return The number.
      * @throws IllegalCharException If the number contains unusual decimal dots.
      */
-    private NumToken makeNumber() {
+    private Token<?> makeNumber() {
         boolean hasDot = false;
         StringBuilder numStr = new StringBuilder();
 
@@ -164,7 +165,8 @@ public final class Lexer {
         if (out.equals(".")) {
             throw new IllegalCharException('.', position);
         }
-        TNumber num = new TNumber(Double.parseDouble(out));
+        //All complex numbers are treated as real when parsed
+        ComplexNum num = new ComplexNum(Double.parseDouble(out), 0);
 
         return new NumToken(num);
     }
@@ -173,7 +175,7 @@ public final class Lexer {
      * Parses the current part of the input into an identifier token.
      * @return The identifier token.
      */
-    private IdentifierToken makeIdentifier() {
+    private Token<?> makeIdentifier() {
         StringBuilder idNameStr = new StringBuilder().append(current);
         advance();
 

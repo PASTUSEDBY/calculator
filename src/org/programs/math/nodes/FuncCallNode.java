@@ -3,7 +3,7 @@ package org.programs.math.nodes;
 import org.programs.math.exceptions.InvalidArgsException;
 import org.programs.math.exceptions.NoSuchIdentifierException;
 import org.programs.math.types.Func;
-import org.programs.math.types.TNumber;
+import org.programs.math.types.ComplexNum;
 import org.programs.math.parser.SymbolTable;
 import org.programs.math.types.Value;
 
@@ -42,7 +42,7 @@ public class FuncCallNode implements Node {
      * @throws InvalidArgsException If the given number of arguments does not match with the function arguments.
      */
     @Override
-    public TNumber visit(SymbolTable st) {
+    public ComplexNum visit(SymbolTable st) {
         if (!st.contains(name, true)) {
             throw new NoSuchIdentifierException(name, true);
         }

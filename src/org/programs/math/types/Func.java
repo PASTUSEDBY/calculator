@@ -85,7 +85,7 @@ public class Func implements Value {
      *
      * @throws RTException If the function recursively calls itself.
      */
-    public TNumber execute(List<Node> args, SymbolTable parent) {
+    public ComplexNum execute(List<Node> args, SymbolTable parent) {
         try {
             if (++callCount > 100) {
                 throw new RTException("Function '" + name + "' recursively calls itself.");
@@ -94,7 +94,7 @@ public class Func implements Value {
             SymbolTable symbolTable = new SymbolTable(parent);
 
             for (int i = 0; i < max; i++) {
-                TNumber val = getArg(args, i, symbolTable);
+                ComplexNum val = getArg(args, i, symbolTable);
                 String paramName = parameters.get(i).getName();
                 symbolTable.set(paramName, val);
             }
@@ -114,7 +114,7 @@ public class Func implements Value {
      * @param st The SymbolTable of this function.
      * @return The argument.
      */
-    protected TNumber getArg(List<Node> args, int index, SymbolTable st) {
+    protected ComplexNum getArg(List<Node> args, int index, SymbolTable st) {
         if (index >= args.size()) {
             return parameters.get(index).defaultVal.visit(st);
         }

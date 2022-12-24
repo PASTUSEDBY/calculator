@@ -1,6 +1,6 @@
 package org.programs.math.nodes;
 
-import org.programs.math.types.TNumber;
+import org.programs.math.types.ComplexNum;
 import org.programs.math.lexer.OpToken;
 import org.programs.math.parser.SymbolTable;
 
@@ -52,9 +52,9 @@ public class BinOpNode implements Node {
      * @throws RuntimeException This should never happen.
      */
     @Override
-    public TNumber visit(SymbolTable st) {
-        TNumber leftNum = left.visit(st);
-        TNumber rightNum = right.visit(st);
+    public ComplexNum visit(SymbolTable st) {
+        ComplexNum leftNum = left.visit(st);
+        ComplexNum rightNum = right.visit(st);
 
         return switch (op.tokenType) {
             case PLUS -> leftNum.add(rightNum);
@@ -62,7 +62,6 @@ public class BinOpNode implements Node {
             case MULTIPLY -> leftNum.multiply(rightNum);
             case DIVIDE -> leftNum.divide(rightNum);
             case INT_DIV -> leftNum.intDivide(rightNum);
-            case MODULUS -> leftNum.modulus(rightNum);
             case POW -> leftNum.pow(rightNum);
             default -> throw new RuntimeException("This should never happen!");
         };

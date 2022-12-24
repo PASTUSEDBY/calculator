@@ -8,24 +8,38 @@ fn log(index, base=10) native
 
 fn ln(index) = log(index, e)
 
-fn sin(deg) native
+fn sin(x) native
 
-fn cos(deg) native
+fn cos(x) native
 
-fn tan(deg) native
+fn tan(x) native
 
-fn cot(deg) = 1 / tan(deg)
+fn cot(x) native
 
-fn sec(deg) = 1 / cos(deg)
+fn sec(x) native
 
-fn cosec(deg) = 1 / sin(deg)
+fn cosec(x) native
+
+fn asin(x) native
+
+fn acos(x) native
+
+fn atan(x) native
+
+fn acot(x) native
+
+fn asec(x) = acos(1 / x)
+
+fn acosec(x) = asin(1 / x)
 
 fn rad(deg) = deg * pi / 180
 
 fn deg(rad) = rad * 180 / pi
 
-fn approx(num, roundDecimals=0) native
-
 fn floor(x) native
 
 fn ceil(x) native
+
+fn frac(x) = x - floor(x)
+
+fn arg(x) native

@@ -4,7 +4,7 @@ import org.programs.math.parser.SymbolTable;
 import org.programs.math.types.Func;
 import org.programs.math.types.NativeFunc;
 import org.programs.math.types.Parameter;
-import org.programs.math.types.TNumber;
+import org.programs.math.types.ComplexNum;
 
 import java.util.List;
 
@@ -56,7 +56,7 @@ public class FuncDefNode implements Node {
      * @return
      */
     @Override
-    public TNumber visit(SymbolTable st) {
+    public ComplexNum visit(SymbolTable st) {
         Func fn = expr != null ?
                 new Func(funcName, expr, parameters) :
                 new NativeFunc(funcName, parameters);

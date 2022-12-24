@@ -1,7 +1,7 @@
 package org.programs.math.nodes;
 
 import org.programs.math.exceptions.NoSuchIdentifierException;
-import org.programs.math.types.TNumber;
+import org.programs.math.types.ComplexNum;
 import org.programs.math.parser.SymbolTable;
 import org.programs.math.types.Value;
 
@@ -34,17 +34,17 @@ public class IdentifierNode implements Node {
      * @throws NoSuchIdentifierException If the identifier does not exist.
      */
     @Override
-    public TNumber visit(SymbolTable st) {
+    public ComplexNum visit(SymbolTable st) {
         String varName = SymbolTable.makeVarName(idName, fnName);
 
         if (st.contains(varName, false)) {
-            return (TNumber) st.get(varName, false);
+            return (ComplexNum) st.get(varName, false);
         }
 
         Value v = st.get(idName, true);
 
-        if (v instanceof TNumber) {
-            return (TNumber) v;
+        if (v instanceof ComplexNum) {
+            return (ComplexNum) v;
         }
 
         throw new NoSuchIdentifierException(idName, false);

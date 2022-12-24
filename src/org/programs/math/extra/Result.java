@@ -1,4 +1,4 @@
-package org.programs.math.types;
+package org.programs.math.extra;
 
 import java.util.function.Function;
 

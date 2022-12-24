@@ -3,7 +3,7 @@ package org.programs.math.nodes;
 import org.programs.math.exceptions.IdentifierExistsException;
 import org.programs.math.parser.SymbolTable;
 import org.programs.math.types.Parameter;
-import org.programs.math.types.TNumber;
+import org.programs.math.types.ComplexNum;
 
 public class SigmaPiNode implements Node {
     public enum Type {
@@ -25,7 +25,7 @@ public class SigmaPiNode implements Node {
     }
 
     @Override
-    public TNumber visit(SymbolTable st) {
+    public ComplexNum visit(SymbolTable st) {
         String name = init.getName();
         if (
                 st.contains(name, false) ||
@@ -34,17 +34,17 @@ public class SigmaPiNode implements Node {
             throw new IdentifierExistsException(init.name, false);
         }
 
-        TNumber initial = init.defaultVal.visit(st);
-        TNumber upto = this.upto.visit(st);
+        ComplexNum initial = init.defaultVal.visit(st);
+        ComplexNum upto = this.upto.visit(st);
 
-        TNumber result = new TNumber(type == Type.SIGMA ? 0 : 1);
+        ComplexNum result = new ComplexNum(type == Type.SIGMA ? 0 : 1, 0);
 
-        while (initial.value <= upto.value) {
+        while (initial.real <= upto.real) {
             st.set(name, initial);
-            TNumber evaluated = evaluationExpr.visit(st);
+            ComplexNum evaluated = evaluationExpr.visit(st);
             result = type == Type.SIGMA ? result.add(evaluated) : result.multiply(evaluated);
 
-            initial = initial.add(new TNumber(1));
+            initial = initial.add(ComplexNum.REAL_UNIT);
         }
 
         st.remove(name);

@@ -1,6 +1,7 @@
 package org.programs.math.types;
 
 import org.programs.math.exceptions.RTException;
+import org.programs.math.extra.Trigonometry;
 import org.programs.math.nodes.Node;
 import org.programs.math.parser.SymbolTable;
 
@@ -34,8 +35,8 @@ public class NativeFunc extends Func {
      * @throws RTException If the native function implementation is not defined.
      */
     @Override
-    public TNumber execute(List<Node> args, SymbolTable parent) {
-        TNumber first, second;
+    public ComplexNum execute(List<Node> args, SymbolTable parent) {
+        ComplexNum first, second;
         //There is at least one argument for each function
         first = getArg(args, 0, parent);
         //For second arg, we need to check
@@ -47,21 +48,20 @@ public class NativeFunc extends Func {
 
         return switch (name) {
             case "root" -> first.root(Objects.requireNonNull(second));
-            case "sin" -> first.sin();
-            case "cos" -> first.cos();
-            case "tan" -> first.tan();
+            case "sin" -> Trigonometry.sin(first);
+            case "cos" -> Trigonometry.cos(first);
+            case "tan" -> Trigonometry.tan(first);
+            case "cot" -> Trigonometry.cot(first);
+            case "sec" -> Trigonometry.sec(first);
+            case "cosec" -> Trigonometry.cosec(first);
+            case "asin" -> Trigonometry.asin(first);
+            case "acos" -> Trigonometry.acos(first);
+            case "atan" -> Trigonometry.atan(first);
+            case "acot" -> Trigonometry.acot(first);
             case "log" -> first.log(Objects.requireNonNull(second));
             case "floor" -> first.floor();
             case "ceil" -> first.ceil();
-            case "approx" -> {
-                Objects.requireNonNull(second);
-                if (second.value < 0) {
-                    throw new RTException("Approximation decimal count is less than zero.");
-                }
-
-                double power = Math.pow(10, second.value), val = first.value * power;
-                yield new TNumber(Math.round(val) / power);
-            }
+            case "arg" -> new ComplexNum(first.argument(), 0);
             default -> throw new RTException("Native function implementation not available for function: '" + name + "'.");
         };
     }

@@ -1,6 +1,6 @@
 package org.programs.math.nodes;
 
-import org.programs.math.types.TNumber;
+import org.programs.math.types.ComplexNum;
 import org.programs.math.lexer.OpToken;
 import org.programs.math.parser.SymbolTable;
 
@@ -41,12 +41,13 @@ public class UnaryOpNode implements Node {
      * @return
      */
     @Override
-    public TNumber visit(SymbolTable st) {
-        TNumber num = node.visit(st);
+    public ComplexNum visit(SymbolTable st) {
+        ComplexNum num = node.visit(st);
         return switch (op.tokenType) {
             case MINUS -> num.negate();
-            case PIPE -> num.absolute();
+            case PIPE -> new ComplexNum(num.modulus(), 0);
             case FACTORIAL -> num.factorial();
+            case COMPLEMENT -> num.conjugate();
             default -> num;
         };
     }
