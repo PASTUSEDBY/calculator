@@ -81,7 +81,7 @@ public final class ComplexNum implements Value {
      * Divides two numbers. An exception is thrown if the divisor is zero.
      * <p>(a + bi) / (c + di) = (a + bi)(1 / c + di)
      * <p>(a + bi)(c - di) / |c + di|^2
-     * <p>{(ac - bd) + (bc - ad)i} / (c^2 + d^2)
+     * <p>{(ac + bd) + (bc - ad)i} / (c^2 + d^2)
      * @param other The other number.
      * @return The quotient.
      */

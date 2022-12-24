@@ -144,7 +144,7 @@ public final class Lexer {
      * @return The number.
      * @throws IllegalCharException If the number contains unusual decimal dots.
      */
-    private Token<?> makeNumber() {
+    private NumToken makeNumber() {
         boolean hasDot = false;
         StringBuilder numStr = new StringBuilder();
 
@@ -175,7 +175,7 @@ public final class Lexer {
      * Parses the current part of the input into an identifier token.
      * @return The identifier token.
      */
-    private Token<?> makeIdentifier() {
+    private IdentifierToken makeIdentifier() {
         StringBuilder idNameStr = new StringBuilder().append(current);
         advance();
 
