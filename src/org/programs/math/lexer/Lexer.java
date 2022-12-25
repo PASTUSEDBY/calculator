@@ -12,25 +12,18 @@ import java.util.*;
  * The Lexer also checks and raises an error upon encountering an invalid token.
  */
 public final class Lexer {
-
-    /**
-     * The list of identifiers which are recognized as keywords and have a special meaning.
-     * <p>List of keywords:
-     * <p>{@code fn} - Function declaration.
-     * <p>{@code native} - Represents that the function declaration is natively done in java.
-     */
     private static final HashSet<String> keywords = new HashSet<>(
             Arrays.asList(
                     "fn",
                     "native",
-                    "sigma",
+                    "sum",
                     "\u03A3", //sigma symbol
                     "pi",
                     "\u03C0", //pi symbol
                     "e",
                     "i",
-                    "\u03A0", //PI symbol
-                    "PI"
+                    "product",
+                    "\u03A0" //product symbol
             )
     );
 

@@ -496,7 +496,7 @@ public final class Parser {
      * @return A node.
      */
     private Node exprKeywords() {
-        if (matchKeyword("sigma", "\u03A3", "\u03A0", "PI")) {
+        if (matchKeyword("sum", "\u03A3", "\u03A0", "product")) {
             return parseSigmaOrPi();
         }
 
@@ -523,15 +523,15 @@ public final class Parser {
      * @return A node.
      */
     private Node parseSigmaOrPi() {
-        //sigma | PI (variable=init, upto, expression)
+        //sum | product (variable=init, upto, expression)
         SigmaPiNode.Type type;
 
-        if (matchKeyword("sigma", "\u03A3")) {
+        if (matchKeyword("sum", "\u03A3")) {
             type = SigmaPiNode.Type.SIGMA;
         } else {
             type = SigmaPiNode.Type.PI;
         }
-        advance(); //sigma | pi: KW
+        advance(); //sum | product: KW
         if (!peek(TokenType.LPAREN)) {
             invalid('(', false);
         }

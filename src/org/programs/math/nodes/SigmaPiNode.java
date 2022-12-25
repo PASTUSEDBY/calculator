@@ -1,9 +1,11 @@
 package org.programs.math.nodes;
 
 import org.programs.math.exceptions.IdentifierExistsException;
+import org.programs.math.exceptions.RTException;
 import org.programs.math.parser.SymbolTable;
 import org.programs.math.types.Parameter;
 import org.programs.math.types.ComplexNum;
+import static org.programs.math.types.ComplexNum.*;
 
 public class SigmaPiNode implements Node {
     public enum Type {
@@ -27,24 +29,25 @@ public class SigmaPiNode implements Node {
     @Override
     public ComplexNum visit(SymbolTable st) {
         String name = init.getName();
-        if (
-                st.contains(name, false) ||
-                st.isGlobal() && SymbolTable.globalIdentifiers.contains(name)
-        ) {
+        if (st.isGlobal() && SymbolTable.globalIdentifiers.contains(name)) {
             throw new IdentifierExistsException(init.name, false);
         }
 
         ComplexNum initial = init.defaultVal.visit(st);
         ComplexNum upto = this.upto.visit(st);
 
-        ComplexNum result = new ComplexNum(type == Type.SIGMA ? 0 : 1, 0);
+        if (!initial.isReal() || !upto.isReal()) {
+            throw new RTException("Sum or product's first two parameters must be real!");
+        }
+
+        ComplexNum result = type == Type.SIGMA ? ZERO : REAL_UNIT;
 
         while (initial.real <= upto.real) {
             st.set(name, initial);
             ComplexNum evaluated = evaluationExpr.visit(st);
             result = type == Type.SIGMA ? result.add(evaluated) : result.multiply(evaluated);
 
-            initial = initial.add(ComplexNum.REAL_UNIT);
+            initial = initial.add(REAL_UNIT);
         }
 
         st.remove(name);

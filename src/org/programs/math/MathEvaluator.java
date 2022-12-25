@@ -32,7 +32,10 @@ public final class MathEvaluator {
 
         try (Scanner sc = new Scanner(in)) {
             String builtIn = getInput(sc);
-            evaluate(builtIn);
+            Result<?, String> res = evaluate(builtIn);
+            if (res.isError()) {
+                throw new RuntimeException("Failed to load built ins: " + res.error);
+            }
         }
     }
 

@@ -32,9 +32,17 @@ fn asec(x) = acos(1 / x)
 
 fn acosec(x) = asin(1 / x)
 
-fn rad(deg) = deg * pi / 180
+fn d2r(deg) = Re(deg * pi / 180)
 
-fn deg(rad) = rad * 180 / pi
+fn r2d(rad) = Re(rad * 180 / pi)
+
+fn g2r(rad) = Re(rad * pi / 200)
+
+fn r2g(g) = Re(g * 200 / pi)
+
+fn d2g(deg) = Re(deg * 10 / 9)
+
+fn g2d(g) = Re(g * 9 / 10)
 
 fn floor(x) native
 
@@ -43,3 +51,7 @@ fn ceil(x) native
 fn frac(x) = x - floor(x)
 
 fn arg(x) native
+
+fn Re(z) = (z + ~z) / 2
+
+fn Im(z) = (z - ~z) / 2i
