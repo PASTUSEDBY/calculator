@@ -3,26 +3,26 @@ package org.programs.math.extra;
 import org.programs.math.exceptions.RTException;
 import org.programs.math.types.ComplexNum;
 
+import static org.programs.math.types.ComplexNum.*;
+
 public final class Trigonometry {
-    private static final ComplexNum i = ComplexNum.IMAGINARY_UNIT;
-    private static final ComplexNum r = ComplexNum.REAL_UNIT;
-    private static final ComplexNum e = ComplexNum.E;
-    private static final ComplexNum pi = ComplexNum.PI;
-
+    private static final ComplexNum REAL_TWO = REAL_UNIT.add(REAL_UNIT);
+    private static final ComplexNum IM_TWO = IMAGINARY_UNIT.add(IMAGINARY_UNIT);
+    private static final ComplexNum PI_HALF = PI.divide(REAL_TWO);
     public static ComplexNum sin(ComplexNum x) {
-        ComplexNum z = i.multiply(x),
-                a = ComplexNum.E.pow(z),
-                b = ComplexNum.E.pow(z.negate());
+        ComplexNum z = IMAGINARY_UNIT.multiply(x),
+                a = E.pow(z),
+                b = E.pow(z.negate());
 
-        return a.subtract(b).divide(i.add(i));
+        return a.subtract(b).divide(IM_TWO);
     }
 
     public static ComplexNum cos(ComplexNum x) {
-        ComplexNum z = i.multiply(x),
+        ComplexNum z = IMAGINARY_UNIT.multiply(x),
                 a = ComplexNum.E.pow(z),
                 b = ComplexNum.E.pow(z.negate());
 
-        return a.add(b).divide(r.add(r));
+        return a.add(b).divide(REAL_TWO);
     }
 
     public static ComplexNum tan(ComplexNum x) {
@@ -58,47 +58,39 @@ public final class Trigonometry {
     }
 
     public static ComplexNum asin(ComplexNum z) {
-        return r.subtract(z.multiply(z))
-                .root(r.add(r))
-                .subtract(z.multiply(i))
-                .pow(i)
-                .log(e);
+        return REAL_UNIT.subtract(z.pow(REAL_TWO))
+                .root(REAL_TWO)
+                .subtract(z.multiply(IMAGINARY_UNIT))
+                .pow(IMAGINARY_UNIT)
+                .log(E);
     }
 
     public static ComplexNum acos(ComplexNum z) {
-        return r.subtract(z.multiply(z))
-                .root(r.add(r))
-                .multiply(i)
-                .add(z)
-                .pow(i)
-                .log(e)
-                .negate();
+        return PI_HALF.subtract(asin(z));
     }
 
     public static ComplexNum atan(ComplexNum z) {
-        return i.subtract(z)
-                .divide(i.add(z))
-                .log(e)
-                .multiply(i)
-                .divide(r.add(r))
+        return IMAGINARY_UNIT.subtract(z)
+                .divide(IMAGINARY_UNIT.add(z))
+                .log(E)
+                .multiply(IMAGINARY_UNIT)
+                .divide(REAL_TWO)
                 .negate();
     }
 
     public static ComplexNum acot(ComplexNum z) {
         if (z.isZero()) {
-            return pi.divide(r.add(r));
+            return PI_HALF;
         }
 
         return atan(z.reciprocal());
     }
 
     private static boolean oddMultipleOfHalfPi(ComplexNum x) {
-        ComplexNum divisor = pi.divide(r.add(r));
-
-        return x.isReal() && Math.abs(x.real / divisor.real % 2) == 1;
+        return x.isReal() && Math.abs(x.real / PI_HALF.real % 2) == 1;
     }
 
     private static boolean intMultipleOfPi(ComplexNum x) {
-        return x.isReal() && Math.abs(x.real) % pi.real == 0;
+        return x.isReal() && Math.abs(x.real) % PI.real == 0;
     }
 }

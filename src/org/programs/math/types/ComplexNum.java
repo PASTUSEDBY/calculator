@@ -125,7 +125,7 @@ public final class ComplexNum implements Value {
 
     /**
      * Performs logarithm of this number to the given base.
-     * <p>ln z = ln |z| + iθ
+     * <p>ln z = ln |z| + i arg(z)
      * <p>log a base b = ln a / ln b
      * @param base The base.
      * @return The result.
