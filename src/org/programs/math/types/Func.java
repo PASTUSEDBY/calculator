@@ -91,11 +91,11 @@ public class Func implements Value {
                 throw new RTException("Function '" + name + "' recursively calls itself.");
             }
 
-            SymbolTable symbolTable = new SymbolTable(parent);
+            SymbolTable symbolTable = new SymbolTable();
 
             for (int i = 0; i < max; i++) {
-                ComplexNum val = getArg(args, i, symbolTable);
-                String paramName = parameters.get(i).getName();
+                ComplexNum val = getArg(args, i, parent);
+                String paramName = parameters.get(i).name;
                 symbolTable.set(paramName, val);
             }
 

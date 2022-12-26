@@ -1,6 +1,5 @@
 package org.programs.math.nodes;
 
-import org.programs.math.exceptions.IdentifierExistsException;
 import org.programs.math.exceptions.RTException;
 import org.programs.math.parser.SymbolTable;
 import org.programs.math.types.Parameter;
@@ -28,10 +27,7 @@ public class SigmaPiNode implements Node {
 
     @Override
     public ComplexNum visit(SymbolTable st) {
-        String name = init.getName();
-        if (st.isGlobal() && SymbolTable.globalIdentifiers.contains(name)) {
-            throw new IdentifierExistsException(init.name, false);
-        }
+        String name = init.name;
 
         ComplexNum initial = init.defaultVal.visit(st);
         ComplexNum upto = this.upto.visit(st);

@@ -14,16 +14,19 @@ public class IdentifierNode implements Node {
      */
     public final String idName;
 
-    private final String fnName;
+    /**
+     * Whether the variable should be queried locally or globally.
+     * If the variable is not found in local, it fallbacks to global.
+     */
+    private final boolean isGlobal;
 
     /**
      * Creates an identifier node.
      * @param idName The name of the identifier.
-     * @param fnName The name of the function it is currently in (if any).
      */
-    public IdentifierNode(String idName, String fnName) {
+    public IdentifierNode(String idName, boolean g) {
         this.idName = idName;
-        this.fnName = fnName;
+        isGlobal = g;
     }
 
     /**
@@ -35,11 +38,13 @@ public class IdentifierNode implements Node {
      */
     @Override
     public ComplexNum visit(SymbolTable st) {
-        String varName = SymbolTable.makeVarName(idName, fnName);
-
-        if (st.contains(varName, false)) {
-            return (ComplexNum) st.get(varName, false);
+        if (!isGlobal) {
+            if (st.contains(idName, false)) {
+                return (ComplexNum) st.get(idName, false);
+            }
         }
+
+        //Fallback to global
 
         Value v = st.get(idName, true);
 
@@ -48,6 +53,18 @@ public class IdentifierNode implements Node {
         }
 
         throw new NoSuchIdentifierException(idName, false);
+
+        /*if (st.contains(idName, false)) {
+            return (ComplexNum) st.get(idName, false);
+        }
+
+        Value v = st.get(idName, true);
+
+        if (v instanceof ComplexNum) {
+            return (ComplexNum) v;
+        }
+
+        throw new NoSuchIdentifierException(idName, false);*/
     }
 
     @Override

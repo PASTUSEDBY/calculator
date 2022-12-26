@@ -346,18 +346,19 @@ public final class Parser {
     private Node varOrFnCall() {
         IdentifierToken token = (IdentifierToken) current;
         String idName = token.value;
+        boolean isGlobal = !varNames.contains(idName);
         advance();
 
         if (SymbolTable.hasVar(idName, varNames)) {
             //This is an identifier
-            return new IdentifierNode(idName, fnName);
+            return new IdentifierNode(idName, isGlobal);
         }
 
         //That extra check was necessary bcz someone can do variable(variable + 1)
         //thinking it as multiplication
         //in a function
         if (!peek(TokenType.LPAREN)) {
-            return new IdentifierNode(idName, fnName);
+            return new IdentifierNode(idName, isGlobal);
         }
         advance();
 
@@ -420,6 +421,7 @@ public final class Parser {
         }
         advance();
 
+        HashSet<String> names = new HashSet<>();
         List<Parameter> parameters = new ArrayList<>();
         boolean hasDefault = false;
         while (!peek(TokenType.RPAREN) && !peek(TokenType.EOF)) {
@@ -432,11 +434,11 @@ public final class Parser {
             IdentifierToken varID = (IdentifierToken) current;
             Node defaultExpr = null;
 
-            if (varNames.contains(varID.value)) {
+            if (names.contains(varID.value)) {
                 throw new IdentifierExistsException(varID.value, false);
             }
 
-            varNames.add(varID.value);
+            names.add(varID.value);
 
             advance();
             if (peek(TokenType.EQUAL)) {
@@ -449,7 +451,7 @@ public final class Parser {
                 throw new ReqAfterOptionalException(fnName);
             }
 
-            Parameter argParam = new Parameter(varID.value, defaultExpr, fnName);
+            Parameter argParam = new Parameter(varID.value, defaultExpr);
             parameters.add(argParam);
 
             if (peek(TokenType.RPAREN) || peek(TokenType.EOF)) continue;
@@ -471,6 +473,8 @@ public final class Parser {
             );
         }
         advance();
+
+        varNames.addAll(names);
 
         if (matchKeyword("native")) {
             advance();
@@ -543,7 +547,10 @@ public final class Parser {
         }
 
         IdentifierToken varID = (IdentifierToken) current;
-        if (varNames.contains(varID.value)) {
+        if (
+                varNames.contains(varID.value) ||
+                fnName == null && SymbolTable.globalIdentifiers.contains(varID.value)
+        ) {
             throw new IdentifierExistsException(varID.value, false);
         }
 
@@ -557,7 +564,7 @@ public final class Parser {
 
         advance();
 
-        Parameter init = new Parameter(varID.value, plusMinus(), fnName);
+        Parameter init = new Parameter(varID.value, plusMinus());
 
 
         if (!peek(TokenType.COMMA)) {

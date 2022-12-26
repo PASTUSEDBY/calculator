@@ -19,24 +19,6 @@ public final class SymbolTable {
         builtIns = new HashSet<>();
     }
 
-    /**
-     * Create a variable name which can be found in the table.
-     * @param id The identifier name.
-     * @param fn The function name where the identifier resides (if any).
-     * @return A string with {@code fn-id} format.
-     */
-    public static String makeVarName(String id, String fn) {
-        if (fn != null) {
-            id = fn + "-" + id;
-        }
-
-        return id;
-    }
-
-    /**
-     * The outer scope symbol table.
-     */
-    private final SymbolTable parent;
     private static SymbolTable global;
 
     /**
@@ -45,25 +27,14 @@ public final class SymbolTable {
     private final HashMap<String, Value> symbols;
 
     /**
-     * Constructs a symbol table with an outer scoped symbol table.
-     * @param p The outer scope symbol table.
-     */
-    public SymbolTable(SymbolTable p) {
-        parent = p;
-        symbols = new HashMap<>();
-
-        if (parent == null) {
-            global = this;
-        }
-    }
-
-    /**
-     * Same as @{code SymbolTable(SymbolTable)}, except sets no outer scope symbol table.
-     * This should be used when setting the global symbol table, mostly.
-     * @see SymbolTable#SymbolTable(SymbolTable)
+     * Constructs a symbol table.
      */
     public SymbolTable() {
-        this(null);
+        symbols = new HashMap<>();
+
+        if (global == null) {
+            global = this;
+        }
     }
 
     /**
@@ -91,10 +62,11 @@ public final class SymbolTable {
      * @return The value if present, or {@code null}.
      */
     public Value get(String id, boolean isGlobal) {
-        Value v = getLocalVar(id);
-        if (!isGlobal || v != null) return v;
-
-        return global.symbols.get(id);
+        if (isGlobal) {
+            return global.symbols.get(id);
+        } else {
+            return symbols.get(id);
+        }
     }
 
     /**
@@ -116,10 +88,7 @@ public final class SymbolTable {
      * @return {@code true} if exists, {@code false} otherwise.
      */
     public boolean contains(String id, boolean isGlobal) {
-        boolean has = hasLocalVar(id);
-        if (!isGlobal) return has;
-
-        return global.symbols.containsKey(id);
+        return isGlobal && global.symbols.containsKey(id) || symbols.containsKey(id);
     }
 
     /**
@@ -135,38 +104,7 @@ public final class SymbolTable {
      * @return {@code true} if the condition satisfies.
      */
     public boolean isGlobal() {
-        return parent == null;
-    }
-
-    /**
-     * Gets the local variable from the symbol table.
-     * @param x The identifier name.
-     * @return The value associated with this. {@code null} if nothing.
-     */
-    private Value getLocalVar(String x) {
-        SymbolTable temp = this;
-        while (!temp.isGlobal()) {
-            Value v = temp.symbols.get(x);
-            temp = temp.parent;
-            if (v != null) return v;
-        }
-
-        return null;
-    }
-
-    /**
-     * Checks if local variable exists in the symbol table.
-     * @param x The identifier name.
-     * @return {@code true} if the variable exists.
-     */
-    private boolean hasLocalVar(String x) {
-        SymbolTable temp = this;
-        while (!temp.isGlobal()) {
-            if (temp.symbols.containsKey(x)) return true;
-            temp = temp.parent;
-        }
-
-        return false;
+        return this == global;
     }
 
     /**
@@ -176,6 +114,6 @@ public final class SymbolTable {
      */
     @Override
     public String toString() {
-        return "(Parent=" + parent + "; Symbols=" + symbols + ")";
+        return "(Symbols=" + symbols + ")";
     }
 }

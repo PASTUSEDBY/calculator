@@ -48,11 +48,9 @@ public class FuncCallNode implements Node {
         }
 
         Value v =  st.get(name, true);
-        if (!(v instanceof Func)) {
+        if (!(v instanceof Func fn)) {
             throw new NoSuchIdentifierException(name, true);
         }
-
-        Func fn = (Func) v;
 
         if (args.size() < fn.min) {
             throw new InvalidArgsException(fn.min, args.size(), true);

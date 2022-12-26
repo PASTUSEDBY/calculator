@@ -35,12 +35,6 @@ public final class Parameter {
     public final Node defaultVal;
 
     /**
-     * The function which this parameter is bound to.
-     * {@code null} if its in a global sum or product.
-     */
-    private final String fnName;
-
-    /**
      * The type of this parameter. Required if no default value is given, optional otherwise.
      */
     public final Type type;
@@ -50,9 +44,8 @@ public final class Parameter {
      *
      * @param name   The name of the parameter.
      * @param oVal   The default value (if any).
-     * @param fnName The function to which it belongs (null if not in a function).
      */
-    public Parameter(String name, Node oVal, String fnName) {
+    public Parameter(String name, Node oVal) {
         this.name = name;
         defaultVal = oVal;
         if (defaultVal == null) {
@@ -60,12 +53,6 @@ public final class Parameter {
         } else {
             type = Type.OPTIONAL;
         }
-
-        this.fnName = fnName;
-    }
-
-    public String getName() {
-        return SymbolTable.makeVarName(name, fnName);
     }
 
     @Override
