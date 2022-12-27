@@ -43,6 +43,6 @@ public class AssignmentNode implements Node {
     }
 
     public String toString() {
-        return idName + "=" + expr;
+        return idName + " = " + expr;
     }
 }

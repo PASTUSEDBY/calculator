@@ -112,8 +112,8 @@ public final class SymbolTable {
      * In the format (Parent={ParentSymbolTable} or null; Symbols={Symbols in this scope})
      * @return The string representation.
      */
-    @Override
+
     public String toString() {
-        return "(Symbols=" + symbols + ")";
+        return symbols.toString();
     }
 }

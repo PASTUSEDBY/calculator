@@ -1,8 +1,8 @@
 package org.programs.math.nodes;
 
-import org.programs.math.types.ComplexNum;
 import org.programs.math.lexer.OpToken;
 import org.programs.math.parser.SymbolTable;
+import org.programs.math.types.ComplexNum;
 
 /**
  * A Node which represents unary operations.
@@ -55,7 +55,7 @@ public class UnaryOpNode implements Node {
     public String toString() {
         return switch (op.tokenType) {
             case PIPE -> "|" + node + "|";
-            case FACTORIAL -> node + "!";
+            case FACTORIAL -> "(" + node + ")!";
             default -> "(" + op.tokenType + node + ")";
         };
     }

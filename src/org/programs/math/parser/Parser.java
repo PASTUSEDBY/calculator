@@ -1,12 +1,22 @@
 package org.programs.math.parser;
 
-import org.programs.math.exceptions.*;
+import org.programs.math.exceptions.BaseException;
+import org.programs.math.exceptions.IdentifierExistsException;
+import org.programs.math.exceptions.InvalidSyntaxException;
+import org.programs.math.exceptions.ReqAfterOptionalException;
 import org.programs.math.extra.Result;
-import org.programs.math.types.*;
-import org.programs.math.lexer.*;
+import org.programs.math.lexer.IdentifierToken;
+import org.programs.math.lexer.OpToken;
+import org.programs.math.lexer.Token;
+import org.programs.math.lexer.TokenType;
 import org.programs.math.nodes.*;
+import org.programs.math.types.ComplexNum;
+import org.programs.math.types.Parameter;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
 import java.util.function.Supplier;
 
 /**
@@ -554,8 +564,6 @@ public final class Parser {
             throw new IdentifierExistsException(varID.value, false);
         }
 
-        varNames.add(varID.value);
-
         advance();
 
         if (!peek(TokenType.EQUAL)) {
@@ -580,6 +588,8 @@ public final class Parser {
         }
 
         advance();
+
+        varNames.add(varID.value);
 
         Node rExpr = plusMinus();
 

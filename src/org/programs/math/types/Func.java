@@ -121,8 +121,13 @@ public class Func implements Value {
         return args.get(index).visit(st);
     }
 
-    @Override
     public String toString() {
-        return "(Args: " + parameters + ", ArgCount:{" + min + "," + max + "}, Body: " + expr + ")";
+        String params = parameters.stream()
+                .map(Parameter::toString)
+                .toList()
+                .toString();
+
+        String body = expr == null ? "native" : "= " + expr;
+        return "fn " + name + "(" + params.substring(1, params.length() - 1) + ") " + body;
     }
 }

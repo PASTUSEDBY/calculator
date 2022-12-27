@@ -2,14 +2,20 @@ package org.programs.math.nodes;
 
 import org.programs.math.exceptions.RTException;
 import org.programs.math.parser.SymbolTable;
-import org.programs.math.types.Parameter;
 import org.programs.math.types.ComplexNum;
-import static org.programs.math.types.ComplexNum.*;
+import org.programs.math.types.Parameter;
+
+import static org.programs.math.types.ComplexNum.REAL_UNIT;
+import static org.programs.math.types.ComplexNum.ZERO;
 
 public class SigmaPiNode implements Node {
     public enum Type {
         SIGMA,
-        PI
+        PI;
+
+        public String toString() {
+            return this == PI ? "product" : "sum";
+        }
     }
 
     public final Type type;
@@ -51,12 +57,10 @@ public class SigmaPiNode implements Node {
         return result;
     }
 
-    @Override
     public String toString() {
-        return "\u03A3 ("
-                + init.name + "=" + init.defaultVal
-                + ", " + upto
-                + ", " + evaluationExpr
-                + ")";
+        return "" + type + "("
+                + init + ", "
+                + upto + ", "
+                + evaluationExpr + ")";
     }
 }

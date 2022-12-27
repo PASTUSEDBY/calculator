@@ -22,7 +22,6 @@ public abstract class BaseException extends RuntimeException {
         return xs[xs.length - 1];
     }
 
-    @Override
     public String toString() {
         return formatName() + ": " + getMessage();
     }

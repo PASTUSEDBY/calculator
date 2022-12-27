@@ -1,7 +1,6 @@
 package org.programs.math.types;
 
 import org.programs.math.nodes.Node;
-import org.programs.math.parser.SymbolTable;
 
 /**
  * Represents a parameter of a function, holding details like its name, default expression (if any), etc.
@@ -55,8 +54,8 @@ public final class Parameter {
         }
     }
 
-    @Override
     public String toString() {
-        return "(Name: " + name + ", Type: " + type + ", Val: " + defaultVal + ")";
+        if (type == Type.REQUIRED) return name;
+        return name + " = " + defaultVal;
     }
 }

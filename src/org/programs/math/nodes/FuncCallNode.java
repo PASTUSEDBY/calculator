@@ -2,9 +2,9 @@ package org.programs.math.nodes;
 
 import org.programs.math.exceptions.InvalidArgsException;
 import org.programs.math.exceptions.NoSuchIdentifierException;
-import org.programs.math.types.Func;
-import org.programs.math.types.ComplexNum;
 import org.programs.math.parser.SymbolTable;
+import org.programs.math.types.ComplexNum;
+import org.programs.math.types.Func;
 import org.programs.math.types.Value;
 
 import java.util.List;
@@ -64,6 +64,10 @@ public class FuncCallNode implements Node {
     }
 
     public String toString() {
-        return "FnCall (" + name + ", " + args + ")";
+        String arguments = args.stream()
+                .map(Node::toString)
+                .toList()
+                .toString();
+        return name + "(" + arguments.substring(1, arguments.length() - 1) + ")";
     }
 }
