@@ -85,17 +85,17 @@ public class Func implements Value {
      *
      * @throws RTException If the function recursively calls itself.
      */
-    public TNumber execute(List<Node> args, SymbolTable parent) {
+    public ComplexNum execute(List<Node> args, SymbolTable parent) {
         try {
             if (++callCount > 100) {
                 throw new RTException("Function '" + name + "' recursively calls itself.");
             }
 
-            SymbolTable symbolTable = new SymbolTable(parent);
+            SymbolTable symbolTable = new SymbolTable();
 
             for (int i = 0; i < max; i++) {
-                TNumber val = getArg(args, i, symbolTable);
-                String paramName = parameters.get(i).getName();
+                ComplexNum val = getArg(args, i, parent);
+                String paramName = parameters.get(i).name;
                 symbolTable.set(paramName, val);
             }
 
@@ -114,15 +114,20 @@ public class Func implements Value {
      * @param st The SymbolTable of this function.
      * @return The argument.
      */
-    protected TNumber getArg(List<Node> args, int index, SymbolTable st) {
+    protected ComplexNum getArg(List<Node> args, int index, SymbolTable st) {
         if (index >= args.size()) {
             return parameters.get(index).defaultVal.visit(st);
         }
         return args.get(index).visit(st);
     }
 
-    @Override
     public String toString() {
-        return "(Args: " + parameters + ", ArgCount:{" + min + "," + max + "}, Body: " + expr + ")";
+        String params = parameters.stream()
+                .map(Parameter::toString)
+                .toList()
+                .toString();
+
+        String body = expr == null ? "native" : "= " + expr;
+        return "fn " + name + "(" + params.substring(1, params.length() - 1) + ") " + body;
     }
 }

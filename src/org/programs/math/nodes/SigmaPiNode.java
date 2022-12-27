@@ -1,14 +1,21 @@
 package org.programs.math.nodes;
 
-import org.programs.math.exceptions.IdentifierExistsException;
+import org.programs.math.exceptions.RTException;
 import org.programs.math.parser.SymbolTable;
+import org.programs.math.types.ComplexNum;
 import org.programs.math.types.Parameter;
-import org.programs.math.types.TNumber;
+
+import static org.programs.math.types.ComplexNum.REAL_UNIT;
+import static org.programs.math.types.ComplexNum.ZERO;
 
 public class SigmaPiNode implements Node {
     public enum Type {
         SIGMA,
-        PI
+        PI;
+
+        public String toString() {
+            return this == PI ? "product" : "sum";
+        }
     }
 
     public final Type type;
@@ -25,26 +32,24 @@ public class SigmaPiNode implements Node {
     }
 
     @Override
-    public TNumber visit(SymbolTable st) {
-        String name = init.getName();
-        if (
-                st.contains(name, false) ||
-                st.isGlobal() && SymbolTable.globalIdentifiers.contains(name)
-        ) {
-            throw new IdentifierExistsException(init.name, false);
+    public ComplexNum visit(SymbolTable st) {
+        String name = init.name;
+
+        ComplexNum initial = init.defaultVal.visit(st);
+        ComplexNum upto = this.upto.visit(st);
+
+        if (!initial.isReal() || !upto.isReal()) {
+            throw new RTException("Sum or product's first two parameters must be real!");
         }
 
-        TNumber initial = init.defaultVal.visit(st);
-        TNumber upto = this.upto.visit(st);
+        ComplexNum result = type == Type.SIGMA ? ZERO : REAL_UNIT;
 
-        TNumber result = new TNumber(type == Type.SIGMA ? 0 : 1);
-
-        while (initial.value <= upto.value) {
+        while (initial.real <= upto.real) {
             st.set(name, initial);
-            TNumber evaluated = evaluationExpr.visit(st);
+            ComplexNum evaluated = evaluationExpr.visit(st);
             result = type == Type.SIGMA ? result.add(evaluated) : result.multiply(evaluated);
 
-            initial = initial.add(new TNumber(1));
+            initial = initial.add(REAL_UNIT);
         }
 
         st.remove(name);
@@ -52,12 +57,10 @@ public class SigmaPiNode implements Node {
         return result;
     }
 
-    @Override
     public String toString() {
-        return "\u03A3 ("
-                + init.name + "=" + init.defaultVal
-                + ", " + upto
-                + ", " + evaluationExpr
-                + ")";
+        return "" + type + "("
+                + init + ", "
+                + upto + ", "
+                + evaluationExpr + ")";
     }
 }

@@ -1,7 +1,7 @@
 package org.programs.math.nodes;
 
 import org.programs.math.parser.SymbolTable;
-import org.programs.math.types.TNumber;
+import org.programs.math.types.ComplexNum;
 
 /**
  * A node which represents assigning values to variables.
@@ -35,14 +35,14 @@ public class AssignmentNode implements Node {
      * @return
      */
     @Override
-    public TNumber visit(SymbolTable st) {
-        TNumber num = expr.visit(st);
+    public ComplexNum visit(SymbolTable st) {
+        ComplexNum num = expr.visit(st);
         st.set(idName, num);
 
         return num;
     }
 
     public String toString() {
-        return idName + "=" + expr;
+        return idName + " = " + expr;
     }
 }

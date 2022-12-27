@@ -1,6 +1,6 @@
 package org.programs.math.nodes;
 
-import org.programs.math.types.TNumber;
+import org.programs.math.types.ComplexNum;
 import org.programs.math.parser.SymbolTable;
 
 /**
@@ -14,5 +14,5 @@ public interface Node {
      * @param st The symbol table of this scope.
      * @return The number evaluated from the nodes.
      */
-    TNumber visit(SymbolTable st);
+    ComplexNum visit(SymbolTable st);
 }

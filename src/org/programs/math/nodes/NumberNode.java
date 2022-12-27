@@ -1,6 +1,6 @@
 package org.programs.math.nodes;
 
-import org.programs.math.types.TNumber;
+import org.programs.math.types.ComplexNum;
 import org.programs.math.parser.SymbolTable;
 
 /**
@@ -10,13 +10,13 @@ public class NumberNode implements Node {
     /**
      * The number.
      */
-    public final TNumber num;
+    public final ComplexNum num;
 
     /**
      * Creates a number node.
      * @param t The number token.
      */
-    public NumberNode(TNumber t) {
+    public NumberNode(ComplexNum t) {
         num = t;
     }
 
@@ -27,7 +27,7 @@ public class NumberNode implements Node {
      * @return
      */
     @Override
-    public TNumber visit(SymbolTable st) {
+    public ComplexNum visit(SymbolTable st) {
         return num;
     }
 

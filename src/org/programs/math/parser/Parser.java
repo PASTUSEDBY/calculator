@@ -1,11 +1,22 @@
 package org.programs.math.parser;
 
-import org.programs.math.exceptions.*;
-import org.programs.math.types.*;
-import org.programs.math.lexer.*;
+import org.programs.math.exceptions.BaseException;
+import org.programs.math.exceptions.IdentifierExistsException;
+import org.programs.math.exceptions.InvalidSyntaxException;
+import org.programs.math.exceptions.ReqAfterOptionalException;
+import org.programs.math.extra.Result;
+import org.programs.math.lexer.IdentifierToken;
+import org.programs.math.lexer.OpToken;
+import org.programs.math.lexer.Token;
+import org.programs.math.lexer.TokenType;
 import org.programs.math.nodes.*;
+import org.programs.math.types.ComplexNum;
+import org.programs.math.types.Parameter;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
 import java.util.function.Supplier;
 
 /**
@@ -96,7 +107,7 @@ public final class Parser {
     private Node atom() {
         return switch (current.tokenType) {
             case NUMBER -> {
-                NumberNode num = new NumberNode((TNumber) current.value);
+                NumberNode num = new NumberNode((ComplexNum) current.value);
                 advance();
                 yield num;
             }
@@ -147,6 +158,18 @@ public final class Parser {
         return at;
     }
 
+    private Node atomFI() {
+        Node atf = atomF();
+        if (matchKeyword("i")) {
+            OpToken op = new OpToken(TokenType.MULTIPLY);
+            Node i = new NumberNode(ComplexNum.IMAGINARY_UNIT);
+            atf = new BinOpNode(atf, op, i);
+            advance();
+        }
+
+        return atf;
+    }
+
     /**
      * Checks if the atom (optional factorial operator) is followed by a {@link TokenType#POW} operator,
      * and if yes, is followed by a factor.
@@ -156,7 +179,7 @@ public final class Parser {
      * @see Parser#unarySign()
      */
     private Node power() {
-        return binOp(this::atomF, this::unarySign, TokenType.POW);
+        return binOp(this::atomFI, this::unarySign, TokenType.POW);
     }
 
     /**
@@ -167,7 +190,7 @@ public final class Parser {
      */
     private Node unarySign() {
         return switch (current.tokenType) {
-            case PLUS, MINUS -> {
+            case PLUS, MINUS, COMPLEMENT -> {
                 Token<?> op = current;
                 advance();
                 yield new UnaryOpNode((OpToken) op, unarySign());
@@ -188,7 +211,8 @@ public final class Parser {
         return binOp(
                 this::unarySign,
                 TokenType.LPAREN,
-                TokenType.IDENTIFIER
+                TokenType.IDENTIFIER,
+                TokenType.KEYWORD
         );
     }
 
@@ -205,7 +229,7 @@ public final class Parser {
     private Node multiDiv() {
         return binOp(
                 this::implicitMulti,
-                TokenType.MULTIPLY, TokenType.DIVIDE, TokenType.INT_DIV, TokenType.MODULUS
+                TokenType.MULTIPLY, TokenType.DIVIDE, TokenType.INT_DIV
         );
     }
 
@@ -332,18 +356,19 @@ public final class Parser {
     private Node varOrFnCall() {
         IdentifierToken token = (IdentifierToken) current;
         String idName = token.value;
+        boolean isGlobal = !varNames.contains(idName);
         advance();
 
         if (SymbolTable.hasVar(idName, varNames)) {
             //This is an identifier
-            return new IdentifierNode(idName, fnName);
+            return new IdentifierNode(idName, isGlobal);
         }
 
         //That extra check was necessary bcz someone can do variable(variable + 1)
         //thinking it as multiplication
         //in a function
         if (!peek(TokenType.LPAREN)) {
-            return new IdentifierNode(idName, fnName);
+            return new IdentifierNode(idName, isGlobal);
         }
         advance();
 
@@ -406,6 +431,7 @@ public final class Parser {
         }
         advance();
 
+        HashSet<String> names = new HashSet<>();
         List<Parameter> parameters = new ArrayList<>();
         boolean hasDefault = false;
         while (!peek(TokenType.RPAREN) && !peek(TokenType.EOF)) {
@@ -418,11 +444,11 @@ public final class Parser {
             IdentifierToken varID = (IdentifierToken) current;
             Node defaultExpr = null;
 
-            if (varNames.contains(varID.value)) {
+            if (names.contains(varID.value)) {
                 throw new IdentifierExistsException(varID.value, false);
             }
 
-            varNames.add(varID.value);
+            names.add(varID.value);
 
             advance();
             if (peek(TokenType.EQUAL)) {
@@ -435,7 +461,7 @@ public final class Parser {
                 throw new ReqAfterOptionalException(fnName);
             }
 
-            Parameter argParam = new Parameter(varID.value, defaultExpr, fnName);
+            Parameter argParam = new Parameter(varID.value, defaultExpr);
             parameters.add(argParam);
 
             if (peek(TokenType.RPAREN) || peek(TokenType.EOF)) continue;
@@ -457,6 +483,8 @@ public final class Parser {
             );
         }
         advance();
+
+        varNames.addAll(names);
 
         if (matchKeyword("native")) {
             advance();
@@ -482,18 +510,23 @@ public final class Parser {
      * @return A node.
      */
     private Node exprKeywords() {
-        if (matchKeyword("sigma", "\u03A3", "\u03A0", "PI")) {
+        if (matchKeyword("sum", "\u03A3", "\u03A0", "product")) {
             return parseSigmaOrPi();
         }
 
         if (matchKeyword("pi", "\u03C0")) {
             advance();
-            return new NumberNode(TNumber.PI);
+            return new NumberNode(ComplexNum.PI);
         }
 
         if (matchKeyword("e")) {
             advance();
-            return new NumberNode(TNumber.E);
+            return new NumberNode(ComplexNum.E);
+        }
+
+        if (matchKeyword("i")) {
+            advance();
+            return new NumberNode(ComplexNum.IMAGINARY_UNIT);
         }
 
         throw new InvalidSyntaxException("Unexpected keyword: " + current);
@@ -504,15 +537,15 @@ public final class Parser {
      * @return A node.
      */
     private Node parseSigmaOrPi() {
-        //sigma | PI (variable=init, upto, expression)
+        //sum | product (variable=init, upto, expression)
         SigmaPiNode.Type type;
 
-        if (matchKeyword("sigma", "\u03A3")) {
+        if (matchKeyword("sum", "\u03A3")) {
             type = SigmaPiNode.Type.SIGMA;
         } else {
             type = SigmaPiNode.Type.PI;
         }
-        advance(); //sigma | pi: KW
+        advance(); //sum | product: KW
         if (!peek(TokenType.LPAREN)) {
             invalid('(', false);
         }
@@ -524,11 +557,12 @@ public final class Parser {
         }
 
         IdentifierToken varID = (IdentifierToken) current;
-        if (varNames.contains(varID.value)) {
+        if (
+                varNames.contains(varID.value) ||
+                fnName == null && SymbolTable.globalIdentifiers.contains(varID.value)
+        ) {
             throw new IdentifierExistsException(varID.value, false);
         }
-
-        varNames.add(varID.value);
 
         advance();
 
@@ -538,7 +572,7 @@ public final class Parser {
 
         advance();
 
-        Parameter init = new Parameter(varID.value, plusMinus(), fnName);
+        Parameter init = new Parameter(varID.value, plusMinus());
 
 
         if (!peek(TokenType.COMMA)) {
@@ -554,6 +588,8 @@ public final class Parser {
         }
 
         advance();
+
+        varNames.add(varID.value);
 
         Node rExpr = plusMinus();
 

@@ -2,9 +2,9 @@ package org.programs.math.nodes;
 
 import org.programs.math.exceptions.InvalidArgsException;
 import org.programs.math.exceptions.NoSuchIdentifierException;
-import org.programs.math.types.Func;
-import org.programs.math.types.TNumber;
 import org.programs.math.parser.SymbolTable;
+import org.programs.math.types.ComplexNum;
+import org.programs.math.types.Func;
 import org.programs.math.types.Value;
 
 import java.util.List;
@@ -42,17 +42,15 @@ public class FuncCallNode implements Node {
      * @throws InvalidArgsException If the given number of arguments does not match with the function arguments.
      */
     @Override
-    public TNumber visit(SymbolTable st) {
+    public ComplexNum visit(SymbolTable st) {
         if (!st.contains(name, true)) {
             throw new NoSuchIdentifierException(name, true);
         }
 
         Value v =  st.get(name, true);
-        if (!(v instanceof Func)) {
+        if (!(v instanceof Func fn)) {
             throw new NoSuchIdentifierException(name, true);
         }
-
-        Func fn = (Func) v;
 
         if (args.size() < fn.min) {
             throw new InvalidArgsException(fn.min, args.size(), true);
@@ -66,6 +64,10 @@ public class FuncCallNode implements Node {
     }
 
     public String toString() {
-        return "FnCall (" + name + ", " + args + ")";
+        String arguments = args.stream()
+                .map(Node::toString)
+                .toList()
+                .toString();
+        return name + "(" + arguments.substring(1, arguments.length() - 1) + ")";
     }
 }

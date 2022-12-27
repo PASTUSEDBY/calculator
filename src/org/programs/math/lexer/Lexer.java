@@ -1,8 +1,8 @@
 package org.programs.math.lexer;
 
 import org.programs.math.exceptions.IllegalCharException;
-import org.programs.math.types.TNumber;
-import org.programs.math.types.Result;
+import org.programs.math.types.ComplexNum;
+import org.programs.math.extra.Result;
 
 import java.util.*;
 
@@ -12,24 +12,18 @@ import java.util.*;
  * The Lexer also checks and raises an error upon encountering an invalid token.
  */
 public final class Lexer {
-
-    /**
-     * The list of identifiers which are recognized as keywords and have a special meaning.
-     * <p>List of keywords:
-     * <p>{@code fn} - Function declaration.
-     * <p>{@code native} - Represents that the function declaration is natively done in java.
-     */
     private static final HashSet<String> keywords = new HashSet<>(
             Arrays.asList(
                     "fn",
                     "native",
-                    "sigma",
+                    "sum",
                     "\u03A3", //sigma symbol
                     "pi",
                     "\u03C0", //pi symbol
                     "e",
-                    "\u03A0", //PI symbol
-                    "PI"
+                    "i",
+                    "product",
+                    "\u03A0" //product symbol
             )
     );
 
@@ -115,8 +109,8 @@ public final class Lexer {
                 }
                 yield operator(TokenType.DIVIDE);
             }
-            case '%' -> operator(TokenType.MODULUS);
             case '^' -> operator(TokenType.POW);
+            case '~' -> operator(TokenType.COMPLEMENT);
             case '(' -> operator(TokenType.LPAREN);
             case ')' -> operator(TokenType.RPAREN);
             case '|' -> operator(TokenType.PIPE);
@@ -164,7 +158,8 @@ public final class Lexer {
         if (out.equals(".")) {
             throw new IllegalCharException('.', position);
         }
-        TNumber num = new TNumber(Double.parseDouble(out));
+        //All complex numbers are treated as real when parsed
+        ComplexNum num = new ComplexNum(Double.parseDouble(out), 0);
 
         return new NumToken(num);
     }

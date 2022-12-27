@@ -35,7 +35,7 @@ public abstract class Token<T> {
      * {@inheritDoc}
      * @return
      */
-    @Override
+
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(tokenType);

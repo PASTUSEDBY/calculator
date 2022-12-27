@@ -55,14 +55,11 @@ public enum TokenType {
     INT_DIV("//"),
 
     /**
-     * Modulus sign. Gives the remainder. (%)
-     */
-    MODULUS("%"),
-
-    /**
      * Exponentiation sign. (^)
      */
     POW("^"),
+
+    COMPLEMENT("~"),
 
     /**
      * Left parenthesis. ( ( )
