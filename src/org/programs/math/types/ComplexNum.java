@@ -95,10 +95,10 @@ public final class ComplexNum implements Value {
         }
 
         ComplexNum cOther = other.conjugate();
-        double divisor = other.modulusSquare();
+        ComplexNum divisor = create(other.modulusSquare(), 0);
 
         return multiply(cOther)
-                .divide(create(divisor, 0));
+                .divide(divisor);
     }
 
     /**
@@ -294,48 +294,24 @@ public final class ComplexNum implements Value {
     }
 
     private String format(double x, boolean isIm) {
-        if (x == 0) {
-            return "";
+        double z = Math.abs(x);
+        String s = isIm && z == 1 ? "" : "" + z;
+        if (s.endsWith(".0")) {
+            s = s.substring(0, s.length() - 2);
         }
-
-        String val = "" + x;
-
-        if (val.endsWith(".0")) {
-            val = val.substring(0, val.length() - 2);
+        if (x < 0) {
+            s = "-" + s;
         }
-
-        if (isIm && Math.abs(x) == 1) {
-            val = x < 0 ? "-" : "";
-        }
-
-        return val + (isIm ? "i" : "");
+        return s + (isIm ? "i" : "");
     }
 
     public String toString() {
-        if (isZero()) {
-            return "0";
-        }
+        if (isZero()) return "0";
+        if (isReal()) return format(real, false);
+        if (isImaginary()) return format(imaginary, true);
 
-        String im = format(imaginary, true);
+        if (imaginary < 0) return format(real, false) + " - " + format(-imaginary, true);
 
-        if (isImaginary()) {
-            return im;
-        }
-
-        String re = format(real, false);
-
-        if (isReal()) {
-            return re;
-        }
-
-        String finalString = re;
-
-        if (im.startsWith("-")) {
-            im = im.substring(1);
-        }
-
-        finalString += imaginary > 0 ? " + " : " - ";
-
-        return finalString + im;
+        return format(real, false) + " + " + format(imaginary, true);
     }
 }
