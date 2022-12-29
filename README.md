@@ -9,4 +9,3 @@ If you _really_ want to use this, u need to do a couple of steps.
 3. Run `src/Main.main` method.  
   
 If you follow these, you will probably get this to work.  
-Happy coding!
