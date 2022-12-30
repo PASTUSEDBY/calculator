@@ -34,6 +34,7 @@ public class FuncDefNode implements Node {
      */
     @Override
     public ComplexNum visit(SymbolTable st) {
+        SymbolTable.check(fn.name);
         st.set(fn.name, fn);
 
         return null;

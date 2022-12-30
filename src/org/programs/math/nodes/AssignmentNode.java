@@ -36,6 +36,7 @@ public class AssignmentNode implements Node {
      */
     @Override
     public ComplexNum visit(SymbolTable st) {
+        SymbolTable.check(idName);
         ComplexNum num = expr.visit(st);
         st.set(idName, num);
 

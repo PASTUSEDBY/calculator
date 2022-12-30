@@ -1,6 +1,8 @@
 package org.programs.math.parser;
 
 import org.programs.math.exceptions.RTException;
+import org.programs.math.types.ComplexNum;
+import org.programs.math.types.Func;
 import org.programs.math.types.Value;
 
 import java.util.HashMap;
@@ -75,10 +77,6 @@ public final class SymbolTable {
      * @param x The value.
      */
     public void set(String id, Value x) {
-        if (builtIns.contains(id) && isGlobal()) {
-            throw new RTException(id + " is a built in function/variable.");
-        }
-
         symbols.put(id, x);
     }
 
@@ -99,19 +97,22 @@ public final class SymbolTable {
         symbols.remove(id);
     }
 
-    /**
-     * Checks if this symbol table is global.
-     * @return {@code true} if the condition satisfies.
-     */
-    public boolean isGlobal() {
-        return this == global;
-    }
+    public static void check(String x) {
+        if (!builtIns.contains(x)) {
+            return;
+        }
 
-    /**
-     * A string representation of this symbol table.
-     * In the format (Parent={ParentSymbolTable} or null; Symbols={Symbols in this scope})
-     * @return The string representation.
-     */
+        Value v = global.symbols.get(x);
+        if (v instanceof Func) {
+            SymbolTable.globalIdentifiers.remove(x);
+        }
+
+        if (v instanceof ComplexNum) {
+            SymbolTable.globalIdentifiers.add(x);
+        }
+
+        throw new RTException(x + " is a built in function/variable.");
+    }
 
     public String toString() {
         return symbols.toString();
