@@ -1,10 +1,12 @@
 package org.programs.math.types;
 
 import org.programs.math.exceptions.RTException;
+import org.programs.math.extra.Trigonometry;
 import org.programs.math.nodes.Node;
 import org.programs.math.parser.SymbolTable;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * <p>Represents a user-defined function.
@@ -15,7 +17,7 @@ import java.util.List;
  *
  * @see SymbolTable
  */
-public class Func implements Value {
+public final class Func implements Value {
 
     /**
      * The name of the function.
@@ -53,11 +55,12 @@ public class Func implements Value {
 
     /**
      * Constructs a function object.
+     *
      * @param name The name of the function.
+     * @param as   The parameters of the function.
      * @param body The function expression.
-     * @param as The parameters of the function.
      */
-    public Func(String name, Node body, List<Parameter> as) {
+    public Func(String name, List<Parameter> as, Node body) {
         this.name = name;
         expr = body;
         parameters = as;
@@ -86,6 +89,10 @@ public class Func implements Value {
      * @throws RTException If the function recursively calls itself.
      */
     public ComplexNum execute(List<Node> args, SymbolTable parent) {
+        if (isNative()) {
+            return execNative(args, parent);
+        }
+
         try {
             if (++callCount > 100) {
                 throw new RTException("Function '" + name + "' recursively calls itself.");
@@ -106,6 +113,14 @@ public class Func implements Value {
     }
 
     /**
+     * Checks if this function is native or not.
+     * @return {@code true} if the function is native.
+     */
+    public boolean isNative() {
+        return expr == null;
+    }
+
+    /**
      * Gets the argument (if present), else the default value provided to the parameter.
      * This method should not throw a NullPointerException ever.
      * If argument is not present, a default value should always be present since the parameter was optional.
@@ -114,11 +129,52 @@ public class Func implements Value {
      * @param st The SymbolTable of this function.
      * @return The argument.
      */
-    protected ComplexNum getArg(List<Node> args, int index, SymbolTable st) {
+    private ComplexNum getArg(List<Node> args, int index, SymbolTable st) {
         if (index >= args.size()) {
             return parameters.get(index).defaultVal.visit(st);
         }
         return args.get(index).visit(st);
+    }
+
+    /**
+     * Executes this native function.
+     * <p>This function is not user-defined. Rather, it's implementation is defined in the source code itself.
+     * @param args The arguments.
+     * @param parent The outer symbol table.
+     * @return The result.
+     * @throws RTException If the native implementation is not found.
+     */
+    private ComplexNum execNative(List<Node> args, SymbolTable parent) {
+        ComplexNum first, second;
+        //There is at least one argument for each function
+        first = getArg(args, 0, parent);
+        //For second arg, we need to check
+        if (parameters.size() == 2) {
+            second = getArg(args, 1, parent);
+        } else {
+            second = null;
+        }
+
+        return switch (name) {
+            case "root" -> first.root(Objects.requireNonNull(second));
+            case "sin" -> Trigonometry.sin(first);
+            case "cos" -> Trigonometry.cos(first);
+            case "tan" -> Trigonometry.tan(first);
+            case "cot" -> Trigonometry.cot(first);
+            case "sec" -> Trigonometry.sec(first);
+            case "cosec" -> Trigonometry.cosec(first);
+            case "asin" -> Trigonometry.asin(first);
+            case "acos" -> Trigonometry.acos(first);
+            case "atan" -> Trigonometry.atan(first);
+            case "acot" -> Trigonometry.acot(first);
+            case "log" -> first.log(Objects.requireNonNull(second));
+            case "floor" -> first.floor();
+            case "ceil" -> first.ceil();
+            case "arg" -> new ComplexNum(first.argument(), 0);
+            default -> throw new RTException(
+                    "Native function implementation not available for function: '" + name + "'."
+            );
+        };
     }
 
     public String toString() {
@@ -127,7 +183,7 @@ public class Func implements Value {
                 .toList()
                 .toString();
 
-        String body = expr == null ? "native" : "= " + expr;
+        String body = isNative() ? "native" : "= " + expr;
         return "fn " + name + "(" + params.substring(1, params.length() - 1) + ") " + body;
     }
 }

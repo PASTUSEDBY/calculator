@@ -3,7 +3,6 @@ package org.programs.math.nodes;
 import org.programs.math.parser.SymbolTable;
 import org.programs.math.types.ComplexNum;
 import org.programs.math.types.Func;
-import org.programs.math.types.NativeFunc;
 import org.programs.math.types.Parameter;
 
 import java.util.List;
@@ -24,20 +23,7 @@ public class FuncDefNode implements Node {
      * @param e The expression.
      */
     public FuncDefNode(String name, List<Parameter> ps, Node e) {
-        if (e == null) {
-            fn = new NativeFunc(name, ps);
-        } else {
-            fn = new Func(name, e, ps);
-        }
-    }
-
-    /**
-     * Creates a function definition node.
-     * @param name The name of the function.
-     * @param ps The parameters.
-     */
-    public FuncDefNode(String name, List<Parameter> ps) {
-        this(name, ps, null);
+        fn = new Func(name, ps, e);
     }
 
     /**

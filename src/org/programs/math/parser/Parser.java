@@ -143,31 +143,27 @@ public final class Parser {
     }
 
     /**
-     * Checks if the atom is followed by a factorial operator.
-     * <p>Factorial operator precedence: 5
+     * Checks if the atom is followed by a factorial operator, and then if it's followed by the
+     * imaginary unit i.
+     * <p>Factorial operator and imaginary unit precedence: 5
      * @return A node.
      * @see Parser#atom()
      */
-    private Node atomF() {
+    private Node atomFI() {
         Node at = atom();
         if (peek(TokenType.FACTORIAL)) {
             at = new UnaryOpNode((OpToken) current, at);
             advance();
         }
 
-        return at;
-    }
-
-    private Node atomFI() {
-        Node atf = atomF();
         if (matchKeyword("i")) {
             OpToken op = new OpToken(TokenType.MULTIPLY);
             Node i = new NumberNode(ComplexNum.IMAGINARY_UNIT);
-            atf = new BinOpNode(atf, op, i);
+            at = new BinOpNode(at, op, i);
             advance();
         }
 
-        return atf;
+        return at;
     }
 
     /**
@@ -175,7 +171,7 @@ public final class Parser {
      * and if yes, is followed by a factor.
      * <p>Precedence: 4
      * @return A node.
-     * @see Parser#atomF()
+     * @see Parser#atomFI()
      * @see Parser#unarySign()
      */
     private Node power() {
@@ -486,20 +482,19 @@ public final class Parser {
 
         varNames.addAll(names);
 
+        Node bodyExpr;
+
         if (matchKeyword("native")) {
+            bodyExpr = null;
             advance();
-            cleanUp();
-            return new FuncDefNode(id.value, parameters);
+        } else {
+            if (!peek(TokenType.EQUAL))
+                throw new InvalidSyntaxException("Expected '='. Found: " + current.tokenType);
+
+            advance();
+            bodyExpr = plusMinus();
         }
 
-        if (!peek(TokenType.EQUAL)) { //not equal for expression body
-            throw new InvalidSyntaxException(
-                    "Expected '='. Found: " + current.tokenType
-            );
-        }
-        advance();
-
-        Node bodyExpr = plusMinus();
         cleanUp();
 
         return new FuncDefNode(id.value, parameters, bodyExpr);
