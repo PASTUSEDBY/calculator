@@ -82,9 +82,9 @@ public enum TokenType {
     FACTORIAL("!"),
 
     /**
-     * Statement end. Either semicolon or new line.
+     * Expression end. Serves as separator between 2 expressions.
      */
-    STATEMENT_END,
+    EXPRESSION_END(";"),
 
     /**
      * End Of File. This marks the end of the given input.

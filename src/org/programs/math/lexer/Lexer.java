@@ -1,8 +1,8 @@
 package org.programs.math.lexer;
 
 import org.programs.math.exceptions.IllegalCharException;
-import org.programs.math.types.ComplexNum;
 import org.programs.math.extra.Result;
+import org.programs.math.types.ComplexNum;
 
 import java.util.*;
 
@@ -118,7 +118,7 @@ public final class Lexer {
             case ' ', '\t' -> null;
             case '.' -> makeNumber();
             case ',' -> operator(TokenType.COMMA);
-            case ';', '\n' -> operator(TokenType.STATEMENT_END);
+            case ';' -> operator(TokenType.EXPRESSION_END);
             case '=' -> operator(TokenType.EQUAL);
             default -> {
                 if (Character.isDigit(current)) {

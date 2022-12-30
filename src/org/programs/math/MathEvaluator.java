@@ -1,16 +1,18 @@
 package org.programs.math;
 
 import org.programs.math.exceptions.BaseException;
-import org.programs.math.nodes.AssignmentNode;
-import org.programs.math.nodes.Node;
-import org.programs.math.types.ComplexNum;
 import org.programs.math.extra.Result;
 import org.programs.math.lexer.Lexer;
+import org.programs.math.nodes.AssignmentNode;
+import org.programs.math.nodes.Node;
 import org.programs.math.parser.Parser;
 import org.programs.math.parser.SymbolTable;
+import org.programs.math.types.ComplexNum;
 
-import java.io.*;
-import java.util.*;
+import java.io.InputStream;
+import java.util.List;
+import java.util.Objects;
+import java.util.Scanner;
 import java.util.stream.Collectors;
 
 public final class MathEvaluator {
@@ -45,7 +47,7 @@ public final class MathEvaluator {
         while (sc.hasNextLine()) {
             text
                     .append(sc.nextLine())
-                    .append('\n');
+                    .append(';');
         }
 
         return text.toString();

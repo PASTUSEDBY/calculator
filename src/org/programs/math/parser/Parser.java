@@ -278,7 +278,7 @@ public final class Parser {
     private List<Node> expressions() {
         List<Node> exprs = new ArrayList<>();
         while (!peek(TokenType.EOF)) {
-            if (peek(TokenType.STATEMENT_END)) {
+            if (peek(TokenType.EXPRESSION_END)) {
                 advance();
                 continue;
             }
@@ -286,7 +286,7 @@ public final class Parser {
             Node node = matchKeyword("fn") ? funcDef() : assignment();
             exprs.add(node);
 
-            if (!peek(TokenType.STATEMENT_END) && !peek(TokenType.EOF)) {
+            if (!peek(TokenType.EXPRESSION_END) && !peek(TokenType.EOF)) {
                 throw new InvalidSyntaxException(
                         "Unexpected end of input. Expected '+', '-', '*', '/', '//' or '^'. Found: " + current.tokenType
                 );
