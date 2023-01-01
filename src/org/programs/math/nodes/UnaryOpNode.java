@@ -12,6 +12,7 @@ import org.programs.math.types.ComplexNum;
  * <p><p>{@code -} - Negates a number.
  * <p><p>{@code |number|} - Gives the absolute value of a number.
  * <p><p>{@code !} - Gives the factorial of a number.
+ * <p><p>{@code ~} - Gives the conjugate of a number.
  */
 public class UnaryOpNode implements Node {
     /**

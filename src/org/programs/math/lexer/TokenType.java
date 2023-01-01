@@ -59,6 +59,10 @@ public enum TokenType {
      */
     POW("^"),
 
+
+    /**
+     * Complement sign. Returns the conjugate of a number. (~)
+     */
     COMPLEMENT("~"),
 
     /**

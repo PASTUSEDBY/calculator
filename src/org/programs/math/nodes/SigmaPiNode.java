@@ -9,7 +9,13 @@ import org.programs.math.types.Parameter;
 import static org.programs.math.types.ComplexNum.REAL_UNIT;
 import static org.programs.math.types.ComplexNum.ZERO;
 
+/**
+ * A Node which represents summation or product. Eg - sum(x = 1, 10, x)
+ */
 public class SigmaPiNode implements Node {
+    /**
+     * The type of this operation (whether summation or product).
+     */
     public enum Type {
         SIGMA,
         PI;
@@ -19,12 +25,33 @@ public class SigmaPiNode implements Node {
         }
     }
 
+    /**
+     * The type of this operation.
+     */
     public final Type type;
+
+    /**
+     * Parameter to store the initial details.
+     */
     public final Parameter init;
+
+    /**
+     * The end expression.
+     */
     public final Node upto;
 
+    /**
+     * The expression to evaluate.
+     */
     public final Node evaluationExpr;
 
+    /**
+     * Constructs a new node.
+     * @param i The initial parameter.
+     * @param u The end number.
+     * @param e The expression.
+     * @param t The type of the operation.
+     */
     public SigmaPiNode(Parameter i, Node u, Node e, Type t) {
         init = i;
         upto = u;
@@ -32,6 +59,13 @@ public class SigmaPiNode implements Node {
         type = t;
     }
 
+    /**
+     * {@inheritDoc}
+     * Returns the result after evaluation.
+     * @param st The symbol table of this scope.
+     * @return The sum or product.
+     * @throws RTException If the first and second parameters are non real.
+     */
     @Override
     public ComplexNum visit(SymbolTable st) {
         String name = init.name;

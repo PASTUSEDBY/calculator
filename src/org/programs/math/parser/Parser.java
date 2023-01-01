@@ -31,6 +31,14 @@ import java.util.function.Supplier;
  * out {@link Node} class.
  */
 public final class Parser {
+    //The implicit multiplication triggers.
+    private static final TokenType[] implicitOps = {
+            TokenType.LPAREN,
+            TokenType.IDENTIFIER,
+            TokenType.KEYWORD
+    };
+
+    private static final List<TokenType> implicits = Arrays.asList(implicitOps);
 
     /**
      * The list of tokens.
@@ -204,12 +212,7 @@ public final class Parser {
      * @return A node.
      */
     private Node implicitMulti() {
-        return binOp(
-                this::unarySign,
-                TokenType.LPAREN,
-                TokenType.IDENTIFIER,
-                TokenType.KEYWORD
-        );
+        return binOp(this::unarySign, implicitOps);
     }
 
     /**
@@ -316,7 +319,7 @@ public final class Parser {
 
         while (OPS.contains(current.tokenType)) {
             Token<?> opToken = current;
-            if (!peek(TokenType.LPAREN) && !peek(TokenType.IDENTIFIER)) {
+            if (!implicits.contains(opToken.tokenType)) {
                 advance();
             } else {
                 opToken = new OpToken(TokenType.MULTIPLY);
@@ -401,7 +404,7 @@ public final class Parser {
      * <p>A function definition generally looks like:
      * <blockquote><pre>
      *     fn f(x, y, z=some default value) native
-     *     fn f(x, y, z=some default value) -> x+y+z
+     *     fn f(x, y, z=some default value) = x+y+z
      * </pre></blockquote>
      *
      * @throws InvalidSyntaxException If the syntax is invalid.

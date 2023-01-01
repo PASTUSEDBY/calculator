@@ -9,11 +9,11 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * <p>Represents a user-defined function.
+ * <p>Represents a function.
  *    Stores information about itself like names, parameters, etc.
- * <p>Each function has its own unique SymbolTable (or variable scope) along with its outer SymbolTable
- *    (from where it was called).
- * <p>
+ * <p>Each function has its own unique SymbolTable (or variable scope). This is to isolate all variables
+ *    from one function to another.
+ * <p>All functions are stored in the global SymbolTable.
  *
  * @see SymbolTable
  */
