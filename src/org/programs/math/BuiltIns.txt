@@ -55,3 +55,7 @@ fn arg(x) native
 fn Re(z) = (z + ~z) / 2
 
 fn Im(z) = (z - ~z) / 2i
+
+fn P(n, r) = n! / (n - r)!
+
+fn C(n, r) = P(n, r) / r!
