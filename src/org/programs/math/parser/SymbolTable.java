@@ -94,6 +94,10 @@ public final class SymbolTable {
      * @param id The identifier name.
      */
     public void remove(String id) {
+        if (this == global && builtIns.contains(id)) {
+            throw new RTException("Cannot delete built in variable/function: " + id);
+        }
+
         symbols.remove(id);
     }
 

@@ -1,5 +1,7 @@
 package org.programs.math;
 
+import org.programs.cli.FileManagement;
+import org.programs.cli.REPL;
 import org.programs.math.exceptions.BaseException;
 import org.programs.math.extra.Result;
 import org.programs.math.lexer.Lexer;
@@ -17,15 +19,21 @@ import java.util.stream.Collectors;
 
 public final class MathEvaluator {
     public static final SymbolTable symbolTable;
+    private static boolean initialized;
 
     static {
         symbolTable = new SymbolTable();
-        preload();
-        SymbolTable.saveBuiltIns(symbolTable);
     }
 
     private MathEvaluator() {
         //private
+    }
+
+    public static void init() {
+        preload();
+        SymbolTable.saveBuiltIns(symbolTable);
+        FileManagement.loadGlobals();
+        initialized = true;
     }
 
     private static void preload() {
@@ -33,24 +41,12 @@ public final class MathEvaluator {
         Objects.requireNonNull(in, "The file BuiltIns.txt is not provided with this package.");
 
         try (Scanner sc = new Scanner(in)) {
-            String builtIn = getInput(sc);
+            String builtIn = FileManagement.getInput(sc);
             Result<?, String> res = evaluate(builtIn);
             if (res.isError()) {
                 throw new RuntimeException("Failed to load built ins: " + res.error);
             }
         }
-    }
-
-    private static String getInput(Scanner sc) {
-        StringBuilder text = new StringBuilder();
-
-        while (sc.hasNextLine()) {
-            text
-                    .append(sc.nextLine())
-                    .append(';');
-        }
-
-        return text.toString();
     }
 
     public static Result<List<ComplexNum>, String> evaluate(String input) {
@@ -73,6 +69,8 @@ public final class MathEvaluator {
                             .filter(Objects::nonNull)
                             .collect(Collectors.toList());
 
+            if (initialized)
+                REPL.saveGlobal(nodes);
             return Result.success(results);
         } catch (BaseException e) {
             return Result.failure(e.toString());
