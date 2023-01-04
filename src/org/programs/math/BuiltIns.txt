@@ -1,4 +1,4 @@
-fn root(num, index) native
+fn root(num, index) = num^(1 / index)
 
 fn sqrt(num) = root(num, 2)
 
@@ -56,6 +56,6 @@ fn Re(z) = (z + ~z) / 2
 
 fn Im(z) = (z - ~z) / 2i
 
-fn P(n, r) = n! / (n - r)!
+fn P(n, r) native
 
 fn C(n, r) = P(n, r) / r!

@@ -156,7 +156,6 @@ public final class Func implements Value {
         }
 
         return switch (name) {
-            case "root" -> first.root(Objects.requireNonNull(second));
             case "sin" -> Trigonometry.sin(first);
             case "cos" -> Trigonometry.cos(first);
             case "tan" -> Trigonometry.tan(first);
@@ -171,6 +170,15 @@ public final class Func implements Value {
             case "floor" -> first.floor();
             case "ceil" -> first.ceil();
             case "arg" -> new ComplexNum(first.argument(), 0);
+            case "P" -> {
+                Objects.requireNonNull(second);
+                if (second.real < 0 || second.real > first.real) {
+                    throw new RTException("Second parameter of permutation/combination is not valid!");
+                }
+
+                yield first.factorial()
+                        .divide(first.subtract(second).factorial());
+            }
             default -> throw new RTException(
                     "Native function implementation not available for function: '" + name + "'."
             );
