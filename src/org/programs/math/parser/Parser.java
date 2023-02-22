@@ -13,10 +13,7 @@ import org.programs.math.nodes.*;
 import org.programs.math.types.ComplexNum;
 import org.programs.math.types.Parameter;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.function.Supplier;
 
 /**
@@ -119,17 +116,7 @@ public final class Parser {
                 advance();
                 yield num;
             }
-            case LPAREN -> {
-                advance();
-                Node expr = plusMinus();
-
-                if (!peek(TokenType.RPAREN)) {
-                    invalid(')');
-                }
-
-                advance();
-                yield expr;
-            }
+            case LPAREN -> funcCompose();
             case PIPE -> {
                 OpToken op = (OpToken) current;
                 advance();
@@ -267,6 +254,73 @@ public final class Parser {
 
         SymbolTable.globalIdentifiers.add(idName);
         return new AssignmentNode(idName, assign);
+    }
+
+    private Node funcCompose() {
+        advance(); // (
+
+        if (!peek(TokenType.IDENTIFIER) || !peekNext(TokenType.FUNC_COMPOSE)) {
+            Node expr = plusMinus();
+
+            if (!peek(TokenType.RPAREN)) {
+                invalid(')');
+            }
+
+            advance();
+
+            return expr;
+        }
+
+        Stack<String> fns = new Stack<>();
+        fns.push((String) current.value);
+
+        advance(); //identifier
+        advance(); //o
+
+        if (!peek(TokenType.IDENTIFIER)) {
+            throw new InvalidSyntaxException("Pls fix this later");
+        }
+
+        fns.push((String) current.value);
+
+        advance(); //identifier
+
+        while (peek(TokenType.FUNC_COMPOSE)) {
+            advance();
+            if (!peek(TokenType.IDENTIFIER)) {
+                throw new InvalidSyntaxException("Pls fix this later");
+            }
+            fns.push((String) current.value);
+            advance();
+        }
+
+        if (!peek(TokenType.RPAREN)) {
+            invalid(')');
+        }
+        advance(); //)
+
+        if (!peek(TokenType.LPAREN)) {
+            invalid('(');
+        }
+        advance();
+
+        Node expr = plusMinus();
+
+        if (!peek(TokenType.RPAREN)) {
+            invalid(')');
+        }
+        advance();
+
+        while (!fns.isEmpty()) {
+            String name = fns.pop();
+            if (SymbolTable.globalIdentifiers.contains(name)) {
+                throw new InvalidSyntaxException("Meh, how can a variable be a function: " + name);
+            }
+
+            expr = new FuncCallNode(name, Collections.singletonList(expr));
+        }
+
+        return expr;
     }
 
     /**

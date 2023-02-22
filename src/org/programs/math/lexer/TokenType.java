@@ -59,6 +59,8 @@ public enum TokenType {
      */
     POW("^"),
 
+    FUNC_COMPOSE("o"),
+
 
     /**
      * Complement sign. Returns the conjugate of a number. (~)

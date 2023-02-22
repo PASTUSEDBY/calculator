@@ -8,6 +8,7 @@ import org.programs.math.nodes.FuncDefNode;
 import org.programs.math.nodes.Node;
 import org.programs.math.types.ComplexNum;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -55,6 +56,7 @@ public final class REPL {
 
                             executeLastExpr(parsed[1]);
                         }
+                        case "help" -> printHelpText();
                         case "exit" -> exit();
                         default -> eval(line);
                     }
@@ -96,15 +98,26 @@ public final class REPL {
 
             if (expr instanceof FuncDefNode funcDef) {
                 FileManagement.deleteDefinition(funcDef.fn.name);
-            } else {
-                Node tExpr = expr;
-                while (tExpr instanceof AssignmentNode assign) {
-                    FileManagement.deleteDefinition(assign.idName);
-                    tExpr = assign.expr;
-                }
+                FileManagement.write(expr.toString());
+                continue;
             }
 
-            FileManagement.write(expr.toString());
+            Node tExpr = expr;
+            StringBuilder sb = new StringBuilder();
+            String varName = "";
+
+            while (tExpr instanceof AssignmentNode assign) {
+                FileManagement.deleteDefinition(assign.idName);
+                tExpr = assign.expr;
+
+                sb.append(assign.idName).append(" = ");
+
+                if (varName.isEmpty()) varName = assign.idName;
+            }
+
+            sb.append(MathEvaluator.symbolTable.get(varName, true));
+
+            FileManagement.write(sb.toString());
         }
     }
 
@@ -130,6 +143,19 @@ public final class REPL {
         history(input);
 
         res.result.forEach(System.out::println);
+    }
+
+    private static void printHelpText() {
+        InputStream in = REPL.class.getResourceAsStream("help.txt");
+        if (in == null) {
+            System.out.println("Help text does not exist.");
+            return;
+        }
+
+        try (Scanner sc = new Scanner(in)) {
+            String line = sc.nextLine();
+            System.out.println(line);
+        }
     }
 
     private static void checkArgs(String[] args, int required) {
