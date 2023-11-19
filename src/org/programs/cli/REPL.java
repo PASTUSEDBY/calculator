@@ -153,8 +153,10 @@ public final class REPL {
         }
 
         try (Scanner sc = new Scanner(in)) {
-            String line = sc.nextLine();
-            System.out.println(line);
+            while (sc.hasNextLine()) {
+                String line = sc.nextLine();
+                System.out.println(line);
+            }
         }
     }
 

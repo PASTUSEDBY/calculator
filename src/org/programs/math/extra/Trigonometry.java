@@ -47,8 +47,7 @@ public final class Trigonometry {
     }
 
     public static ComplexNum tan(ComplexNum x) {
-        x = resolveInAngle(x);
-        if (oddMultipleOfHalfPi(x)) {
+        if (oddMultipleOfHalfPi(resolveInAngle(x))) {
             throw new RTException("Odd multiple of PI / 2 was given to tan!");
         }
 
@@ -56,8 +55,7 @@ public final class Trigonometry {
     }
 
     public static ComplexNum sec(ComplexNum x) {
-        x = resolveInAngle(x);
-        if (oddMultipleOfHalfPi(x)) {
+        if (oddMultipleOfHalfPi(resolveInAngle(x))) {
             throw new RTException("Odd multiple of PI / 2 was given to sec!");
         }
 
@@ -65,8 +63,7 @@ public final class Trigonometry {
     }
 
     public static ComplexNum cosec(ComplexNum x) {
-        x = resolveInAngle(x);
-        if (intMultipleOfPi(x)) {
+        if (intMultipleOfPi(resolveInAngle(x))) {
             throw new RTException("Multiple of PI was given to cosec!");
         }
 
@@ -74,8 +71,7 @@ public final class Trigonometry {
     }
 
     public static ComplexNum cot(ComplexNum x) {
-        x = resolveInAngle(x);
-        if (intMultipleOfPi(x)) {
+        if (intMultipleOfPi(resolveInAngle(x))) {
             throw new RTException("Multiple of PI was given to cot!");
         }
 

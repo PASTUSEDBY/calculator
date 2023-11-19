@@ -1,0 +1,174 @@
+PAST'S MIGHTY CALCULATOR (fx-82ms++)
+This calculator can perform simple calculations.
+Examples:
+Enter input > 256 + 45 * 78 / 12 ^ 2
+280.375
+Enter input > 0.1 + 0.2
+0.30000000000000004
+Enter input > 50(65 - 15) / 5! * 147
+3062.5
+
+Built-in constants like e and pi (greek letter is also accepted) can also be used in calculations.
+Examples:
+Enter input > (e^2 + 2^-e) / -pi^4
+-0.07741588841596145
+Enter input > π^e - e^π
+-0.6815349144182257
+
+Basic operations (except factorial) work with complex numbers too (any complex number z = x + iy).
+Examples:
+Enter input > (2 + 3i) / (5 + 6i) *  |i(26 + 5i)|
+12.153103746113585 + 1.3021182585121698i
+Enter input > 9 + 15i - (15 - 87i) * (65 + 8i)
+-1662 + 5550i
+Enter input > (3 + 2i) ^ (2 + i)
+-5.600430345839603 + 4.557757310292928i
+
+A NOTE ABOUT PRECEDENCE:
+General algebraic precedences are followed. However, for implicit multiplication, it has a higher precedence
+than normal division and multiplication.
+Implicit multiplication is when you write 2i instead of 2 * i.
+This is to avoid something like 1 / 2i to be interpreted as 1 / 2 * i, left to right.
+To use implicit multiplication between 2 variables, add a space.
+For example: i / e π is the same as i / (e * π)
+
+(Implicit multiplication)
+Enter input > i / e π
+0.11709966304863834i
+(Normal)
+Enter input > i / e * π
+1.1557273497909217i
+
+BUILT-IN FUNCTIONS OVERVIEW: Many built-in functions exist.
+_____________________________________________________________________________________________________________________________
+		FUNCTION						PURPOSE
+_____________________________________________________________________________________________________________________________
+sqrt(z)						|	Calculates the square root of any complex number z.
+cbrt(z)						|	Calculates the cube root of any complex number z.
+arg(z)						|	Calculates the argument of any complex number z, in radians.
+C(n, r)						|	Calculates nCr. Refer to your math book for the rest.
+P(n, r)						|	Calculates nPr. Refer to your math book for the rest.
+Re(z)						|	Calculates the real part of any complex number z.
+Im(z)						|	Calculates the imaginary part of any complex number z.
+floor(z)					|	Calculates the floor value of any complex number z.
+						    |	It finds the floor value of the real and the imaginary
+						    |	parts separately.
+ceil(z)						|	Calculates the ceiling value of any complex number z.
+						    |	It finds the ceiling value of the real and the imaginary
+						    |	parts separately.
+						    |	Calculates the fractional part of any complex number z.
+frac(z)						|	It finds the fractional part of the real and the imaginary
+						    |	parts separately.
+root(z, n)					|	Calculates the nth root of any complex number z.
+log(z)						|	Calculates the base 10 logarithm of any complex number z.
+ln(z)						|	Calculates the natural logarithm of any complex number z.
+log(z, b)					|	Calculates the base b logarithm of any complex number z.
+						    |	b can be any complex number.
+						    |
+Trigonometric functions:	|
+sin(z)						|	Calculates the sin of any complex number z.
+cos(z)						|	Calculates the cos of any complex number z.
+tan(z)						|	Calculates the tan of any complex number z.
+sec(z)						|	Calculates the sec of any complex number z.
+cosec(z)					|	Calculates the cosec of any complex number z.
+cot(z)						|	Calculates the cot of any complex number z.
+asin(z)						|	Calculates the arcsin of any complex number z.
+acos(z)						|	Calculates the arccos of any complex number z.
+atan(z)						|	Calculates the arctan of any complex number z.
+asec(z)						|	Calculates the arcsec of any complex number z.
+acosec(z)					|	Calculates the arccosec of any complex number z.
+acot(z)						|	Calculates the arccot of any complex number z.
+						    |
+Angle Conversion:			|
+d2g(z)						|	Converts any angle z from degree to grades.
+g2d(z)						|	Converts any angle z from grades to degree.
+d2r(z)						|	Converts any angle z from degree to radian.
+r2d(z)						|	Converts any angle z from radian to degree.
+r2g(z)						|	Converts any angle z from radian to grades.
+g2r(z)						|	Converts any angle z from grades to radian.
+
+						    |	Despite z being an angle, these functions accept any complex
+						    |	number and convert the real part only. The imaginary part is
+						    |	ignored.
+_____________________________________________________________________________________________________________________________
+
+Summation and product operations:
+
+sum(initialization, end, expression)		|	Calculates the summation of expression from start to end.
+product(initialization, end, expression)	|	Calculates the product of expression from start to end.
+
+The summation and the product operations have identical syntax, as shown above.
+
+The greek notations (Σ for sum, Π for product) are accepted too.
+Examples:
+Enter input > Σ(a = 1, 10, a!/a^5)
+45.205369916602024
+Enter input > Π(a = 5, 15, 2)
+2048
+In the second example a is the variable, whose initial value is 5, and 15 is the ending value. It's the same as
+15
+Π	2
+a = 5
+Instead of expressions, built-in functions and user-defined functions can also be used.
+Examples:
+Enter input > sum(r = 0, 7, C(7, r))
+128
+Enter input > Π(q = 1, 10, Σ(r = 1, q, 1 + 1/r))
+1.9917736084356058E8
+
+As seen above, sum and products can be nested, since the initial value, the end are expressions themselves.
+One more example:
+Enter input > Σ(q = 1, Σ(r = 1, 10, 1 + 1/r), Σ(r = 1, q, 1 + 1/r))
+106.3417388167388
+
+USER-DEFINED VARIABLES AND FUNCTIONS:
+Variables can be declared using the = sign. The syntax is:
+<variable name> = <value>
+The value can be the result of a calculation,
+or any number.
+Examples:
+1) Enter input > var = 45
+   Enter input > C(var - 35, var - 40)
+   252
+2) Enter input > cmplxvar = (5 + 2i) / (7 + 3i)
+   Enter input > arg(cmplxvar) + sin(cmplxvar^i)
+   0.8472124947091401 - 0.20258047355379497i
+3) Enter input > c = sum(z = 0, π, 4^-z)
+   Enter input > c
+   1.328125
+   Enter input > c / 4!
+   0.055338541666666664
+
+User-defined functions are defined in a similar fashion. The syntax is:
+fn <function name>(<parameter>) = <expression>
+
+Multiple parameters can be used in a function declaration.
+For example
+Enter input > fn f(x) = x + 5
+Enter input > fn g(x, y) = x + y
+Enter input > fn h(x, y = 5) = x + y
+
+The last example means that if no value is provided for y, it will be 5. So h(5) will give 10 and
+h(5, 2) will give 7.
+
+More examples
+Enter input > fn f(x) = x^x
+Enter input > fn g(x, y = 5) = y^f(x) + sin(f(x)) + tan(y)
+Enter input > g(2)
+620.8626824984452
+
+CLI COMMANDS
+_____________________________________________________________________________________________________________________________
+		COMMAND						        PURPOSE
+_____________________________________________________________________________________________________________________________
+cat <angleType>						|	Changes the angle type of the inputs and outputs
+							        |	to the specified angleType. angleType can be deg
+							        |	or degrees, or rad or radians, or grad or grades.
+del <variable>						|	Deletes the variable from the cache. Variable entered
+							        |	as parameter by the user must be defined by them before.
+							        |	Built-in constants can't be deleted.
+help							    |	Prints this help text.
+exit							    |	Quits this calculator.
+_____________________________________________________________________________________________________________________________
+
+Happy mathing!

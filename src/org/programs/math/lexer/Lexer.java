@@ -152,9 +152,10 @@ public final class Lexer {
             advance();
         }
 
+        String out = numStr + parseExponent();
+
         goBack();
 
-        String out = numStr.toString();
         if (out.equals(".")) {
             throw new IllegalCharException('.', position);
         }
@@ -162,6 +163,39 @@ public final class Lexer {
         ComplexNum num = new ComplexNum(Double.parseDouble(out), 0);
 
         return new NumToken(num);
+    }
+
+    private String parseExponent() {
+        if (!peek('e') && !peek('E')) {
+            return "";
+        }
+
+        StringBuilder out = new StringBuilder();
+        out.append(current);
+        advance();
+
+        boolean hasSign = false;
+
+        if (peek('+') || peek('-')) {
+            out.append(current);
+            hasSign = true;
+            advance();
+        }
+
+        while (notEnded() && Character.isDigit(current)) {
+            out.append(current);
+            advance();
+        }
+
+        if (out.length() == 1) {
+            throw new IllegalCharException(out.charAt(0), position);
+        }
+
+        if (hasSign && out.length() == 2) {
+            throw new IllegalCharException(out.charAt(1), position);
+        }
+
+        return out.toString();
     }
 
     /**

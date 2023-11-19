@@ -82,15 +82,17 @@ public class SigmaPiNode implements Node {
 
         ComplexNum result = type == Type.SIGMA ? ZERO : REAL_UNIT;
 
-        while (initial.real <= upto.real) {
-            st.set(name, initial);
-            ComplexNum evaluated = evaluationExpr.visit(st);
-            result = type == Type.SIGMA ? result.add(evaluated) : result.multiply(evaluated);
+        try {
+            while (initial.real <= upto.real) {
+                st.set(name, initial);
+                ComplexNum evaluated = evaluationExpr.visit(st);
+                result = type == Type.SIGMA ? result.add(evaluated) : result.multiply(evaluated);
 
-            initial = initial.add(REAL_UNIT);
+                initial = initial.add(REAL_UNIT);
+            }
+        } finally {
+            st.remove(name);
         }
-
-        st.remove(name);
 
         return result;
     }
